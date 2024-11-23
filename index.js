@@ -7,33 +7,36 @@ function createAllCityBoxes (city) {
     cityDiv.textContent = city.name;
     return cityDiv;
 }
+//______________________________
 
-/*går igenom databasen gör att se ifall staden finns eller inte*/
-function isCityFound (target) {
+
+/*går igenom databasen gör att se ifall staden finns eller inte, och ändrar vad det står i tab*/
+function isCityFound(target) {
     let cityFound = false;
     let chosenCity = null;
-    const targetLC = target.toLowerCase ();
+    const targetLC = target.toLowerCase();
 
+    //Sätter "chosenCity" till T/F om "target" matchar något namn i "cities"
     for (let cityValue of cities) {
-        const cityValueLC = cityValue.name.toLowerCase ()
-        console.log("Innan if funktionen.");
-
+        const cityValueLC = cityValue.name.toLowerCase()
+        titleElem = document.querySelector("title");
         if (targetLC == cityValueLC) {
-            console.log("Inuti if-satsen")
             //Jämför target med indexerad (chosenCity) array i Cities
             cityFound = true;
-            h2.textContent = target;
+            h2.textContent = target + " (" + cityValue.country + ")";
             chosenCity = cityValue;
-            console.log(cityFound);
+            //Sätt rätt title (fliken)
+            titleElem.innerText = cityValue.name;
+            //Avbryt loopen, chosenCity=T, staden finns i databasen
             break;
         } else {
-            console.log("Denna stad finns ej");
-            console.log(cityFound);
+            h2.textContent = target + " finns inte i databasen"
+            //Sätt rätt title (fliken)
+            titleElem.innerText = "Not Found"
         }
-        console.log("Chosen city = '" + chosenCity + "'" );
-        console.log("______")
-
+        console.log("__________")
     }
+    return cityFound;
 };
 
 
@@ -108,7 +111,7 @@ function createTable() {
     }
 }
 createTable();
-
+//______________________________
 
 
 
