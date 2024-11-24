@@ -1,4 +1,4 @@
-// Recommended: All functions declared here
+    // Recommended: All functions declared here
 
 /**skapr div år alla länderna och kopplar den till sin css class */
 function createAllCityBoxes (city) {
@@ -8,9 +8,25 @@ function createAllCityBoxes (city) {
     return cityDiv;
 }
 //______________________________
+function markCityBox(cityObject, kindOfCity) {
+    // Hämta stadens HTML-element med dess namn
+    const cityElement = document.querySelector(`[data-city="${cityObject.name}"]`);
+  
+    // Om elementet inte finns, gör ingenting
+    if (!cityElement) {
+      console.warn(`City element not found for: ${cityObject.name}`);
+      return;
+    }
+  
+    // Ta bort tidigare klasser (om någon av dessa redan finns)
+    cityElement.classList.remove("target", "closest", "furthest");
+  
+    // Lägg till rätt klass baserat på typen av stad
+    cityElement.classList.add(kindOfCity);
+  }
+      
 
-
-/*går igenom databasen gör att se ifall staden finns eller inte, och ändrar vad det står i tab*/
+/**går igenom databasen gör att se ifall staden finns eller inte, och ändrar vad det står i tab*/
 function isCityFound(target) {
     let cityFound = false;
     let chosenCity = null;
@@ -33,17 +49,37 @@ function isCityFound(target) {
             h2.textContent = target + " finns inte i databasen"
             //Sätt rätt title (fliken)
             titleElem.innerText = "Not Found"
+            document.querySelector("h3").textContent = null;
         }
         console.log("__________")
     }
     return cityFound;
 };
 
+//________________
+
+/*furthestcitybox**/
+let maxDistance = 0;
+let furthestCityIndex = -1;
+
+const ifCityMatch = (cityName, cityIndex) => cityName === cities[cityIndex].name;
+
+distances.forEach(({ city1, city2, distance }) => {
+  if (ifCityMatch(isCityFound, city1) || ifCityMatch(isCityFound, city2)) {
+    const otherCity = ifCityMatch(isCityFound, city1) ? city2 : city1;
+
+    if (distance > maxDistance) {
+      maxDistance = distance;
+      furthestCityIndex = otherCity;
+    }
+  }
+});
 
 
+  
 
 
-
+  
 
 /**tabellen*/
 function createTable() {
@@ -114,10 +150,6 @@ createTable();
 //______________________________
 
 
-
-
-
-
 // Recommended: constants with references to existing HTML-elements
 
 const h2 = document.querySelector("h2");
@@ -126,7 +158,7 @@ const closestCity = document.getElementById("closest");
 const furthestCity = document.getElementById("furthest");
 const divCities = document.getElementById("cities");
 
-// Recommended: Ask for the city name and then the rest of the code
+    // Recommended: Ask for the city name and then the rest of the code
 
 const target = prompt("Vilken stad?");
 console.log (target);
@@ -139,4 +171,5 @@ for (let city of cities) {
     divCitiesElem.append(createAllCityBoxes(city));
 };
 
+console.log(cities);
 
