@@ -177,6 +177,9 @@ function createTable() {
 //------
 
 
+// Starta programmet genom att fråga användaren efter en stad
+const targetCityName = prompt("Skriv en stad tack!"); // Fråga användaren efter stadens namn
+
 
 
 
