@@ -180,6 +180,11 @@ function createTable() {
 // Starta programmet genom att fråga användaren efter en stad
 const targetCityName = prompt("Skriv en stad tack!"); // Fråga användaren efter stadens namn
 
+let targetCityObject = getTargetCityObject(targetCityName); // Hitta objektet för den valda staden
+let closestFurthest = findClosestFurthest(targetCityObject); // Hitta den närmaste och längst bort staden
+createAllCityBoxes(targetCityName); // Skapa alla stadskort
+createTable(); // Skapa tabellen som visar avstånden
+
 
 
 
