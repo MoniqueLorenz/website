@@ -174,7 +174,7 @@ function createTable() {
         }
     }
 }
-//------
+
 
 
 // Starta programmet genom att fråga användaren efter en stad
@@ -188,6 +188,12 @@ createTable(); // Skapa tabellen som visar avstånden
 
 
 
-
       
-
+//variabler
+const citiesDiv = document.querySelector("#cities");
+const h2 = document.querySelector("h2");
+const h3 = document.querySelector("h3");
+const closestCity = document.querySelector("#closest");
+const furthestCity = document.querySelector("#furthest");
+const table = document.querySelector("#table");
+const tabName = document.head.querySelector("title");
