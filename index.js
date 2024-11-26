@@ -1,29 +1,34 @@
     // Recommended: All functions declared here
-
-/**skapr div år alla länderna och kopplar den till sin css class */
-function createAllCityBoxes (city) {
-    const cityDiv = document.createElement("div");
-    cityDiv.classList.add("cityBox");
-    cityDiv.textContent = city.name;
-    return cityDiv;
+// Funktion för att jämföra två stadnamn utan att ta hänsyn till storlek på bokstäver
+function isSameName(name1, name2) {
+    // Konverterar båda namnen till små bokstäver och jämför dem
+    return name1.toLowerCase() === name2.toLowerCase();
 }
-//______________________________
-function markCityBox(cityObject, kindOfCity) {
-    // Hämta stadens HTML-element med dess namn
-    const cityElement = document.querySelector(`[data-city="${cityObject.name}"]`);
-  
-    // Om elementet inte finns, gör ingenting
-    if (!cityElement) {
-      console.warn(`City element not found for: ${cityObject.name}`);
-      return;
+
+// Funktion som söker en stad i en lista med städer och returnerar stadens objekt
+function getTargetCityObject(cityName) {
+    // Går igenom alla städer
+    for (let city of cities) {
+        // Om stadens namn matchar med det angivna namnet
+        if (isSameName(cityName, city.name)) {
+            return city; // Returnerar stadens objekt
+        }
     }
-  
-    // Ta bort tidigare klasser (om någon av dessa redan finns)
-    cityElement.classList.remove("target", "closest", "furthest");
-  
-    // Lägg till rätt klass baserat på typen av stad
-    cityElement.classList.add(kindOfCity);
-  }
+    // Om staden inte hittas, visa ett felmeddelande på sidan
+    let h2 = document.querySelector("h2");
+    h2.innerHTML = `${cityName} finns inte i databasen`;
+    document.querySelector("title").innerHTML = `Not found`
+    document.querySelector("h3").textContent = "";
+    return null; // Returnerar null om staden inte hittas
+}
+
+//------
+
+//-----
+
+
+
+
       
 
 /**går igenom databasen gör att se ifall staden finns eller inte, och ändrar vad det står i tab*/
@@ -49,7 +54,7 @@ function isCityFound(target) {
             h2.textContent = target + " finns inte i databasen"
             //Sätt rätt title (fliken)
             titleElem.innerText = "Not Found"
-            document.querySelector("h3").textContent = null;
+            //document.querySelector("h3").textContent = null;
         }
         console.log("__________")
     }
@@ -58,22 +63,7 @@ function isCityFound(target) {
 
 //________________
 
-/*furthestcitybox**/
-let maxDistance = 0;
-let furthestCityIndex = -1;
 
-const ifCityMatch = (cityName, cityIndex) => cityName === cities[cityIndex].name;
-
-distances.forEach(({ city1, city2, distance }) => {
-  if (ifCityMatch(isCityFound, city1) || ifCityMatch(isCityFound, city2)) {
-    const otherCity = ifCityMatch(isCityFound, city1) ? city2 : city1;
-
-    if (distance > maxDistance) {
-      maxDistance = distance;
-      furthestCityIndex = otherCity;
-    }
-  }
-});
 
 
   
@@ -171,5 +161,5 @@ for (let city of cities) {
     divCitiesElem.append(createAllCityBoxes(city));
 };
 
-console.log(cities);
 
+console.log(cities);
