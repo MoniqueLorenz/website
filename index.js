@@ -1,158 +1,114 @@
-function isSameName(name1, name2) {
-    return name1.toLowerCase() === name2.toLowerCase();
+function areNamesEqual(name1, name2) {
+    return name1.toLowerCase() === name2.toLowerCase(); 
 }
 
 function getTargetCityObject(cityName) {
-    for (let city of cities) {
-        if (isSameName(cityName, city.name)) {
-            return city;
-        }
+    const city = cities.find(city => areNamesEqual(cityName, city.name)); 
+    if (city) {
+        return city;
     }
-    let h2 = document.querySelector("h2");
-    h2.innerHTML = `${cityName} finns inte i databasen`;
-    document.querySelector("title").innerHTML = `Not found`
+    document.querySelector("h2").innerHTML = `${cityName} finns inte i databasen`;
+    document.querySelector("title").innerHTML = "Not found";
     document.querySelector("h3").textContent = "";
-    return null;
+    return null; 
 }
 
 function findClosestFurthest(targetCityObject) {
-    if (targetCityObject === null) {
-        return null;
-    }
+    if (!targetCityObject) return null; 
 
-    let targetID = targetCityObject.id;
-    let closestCityID = null;
-    let closestValue = 1000000;
-    let furthestCityID = null;
-    let furthestValue = 0;
+    let closestCity = { id: null, distance: Infinity };
+    let furthestCity = { id: null, distance: 0 };
 
-    for (let distance of distances) {
-        if (targetID === distance.city1 || targetID === distance.city2) {
-            if (distance.distance < closestValue) {
-                if (targetID === distance.city1) {
-                    closestCityID = distance.city2;
-                    closestValue = distance.distance;
-                } else {
-                    closestCityID = distance.city1;
-                    closestValue = distance.distance;
-                }
+    distances.forEach(distance => {
+        if (targetCityObject.id === distance.city1 || targetCityObject.id === distance.city2) {
+            const otherCityID = targetCityObject.id === distance.city1 ? distance.city2 : distance.city1;
+            const cityDistance = distance.distance;
+
+            if (cityDistance < closestCity.distance) {
+                closestCity = { id: otherCityID, distance: cityDistance };
             }
-            if (distance.distance > furthestValue) {
-                if (targetID === distance.city1) {
-                    furthestCityID = distance.city2;
-                    furthestValue = distance.distance;
-                } else {
-                    furthestCityID = distance.city1;
-                    furthestValue = distance.distance;
-                }
+
+            if (cityDistance > furthestCity.distance) {
+                furthestCity = { id: otherCityID, distance: cityDistance };
             }
         }
-    }
-    return [closestCityID, closestValue, furthestCityID, furthestValue];
+    });
+
+    return [closestCity.id, closestCity.distance, furthestCity.id, furthestCity.distance];
 }
 
 function createAllCityBoxes(cityName) {
-    for (let city of cities) {
+    cities.forEach(city => {
         const cityBox = document.createElement("div");
+        cityBox.classList.add("cityBox");
+        cityBox.textContent = city.name;
         document.querySelector("#cities").appendChild(cityBox);
-        cityBox.setAttribute("class", "cityBox");
-        cityBox.innerHTML = city.name;
 
-        if (closestFurthest === null) {
-            continue;
-        }
-        if (isSameName(cityName, city.name)) {
-            cityBox.setAttribute("class", "target cityBox");
+        if (areNamesEqual(cityName, city.name)) {
+            cityBox.classList.add("target");
             document.querySelector("h2").innerHTML = `${city.name} (${city.country})`;
             document.querySelector("title").innerHTML = city.name;
         }
 
-        if (closestFurthest[0] === city.id) {
-            cityBox.setAttribute("class", "closest cityBox");
-            cityBox.innerHTML = `${city.name} ligger ${closestFurthest[1] / 10} mil bort`;
+        if (closestFurthest && closestFurthest[0] === city.id) {
+            cityBox.classList.add("closest");
+            cityBox.textContent = `${city.name} ligger ${closestFurthest[1] / 10} mil bort`;
             document.querySelector("#closest").innerHTML = city.name;
         }
 
-        if (closestFurthest[2] === city.id) {
-            cityBox.setAttribute("class", "furthest cityBox");
-            cityBox.innerHTML = `${city.name} ligger ${closestFurthest[3] / 10} mil bort`;
+        if (closestFurthest && closestFurthest[2] === city.id) {
+            cityBox.classList.add("furthest");
+            cityBox.textContent = `${city.name} ligger ${closestFurthest[3] / 10} mil bort`;
             document.querySelector("#furthest").innerHTML = city.name;
         }
-    }
+    });
 }
 
 function createTable() {
     const table = document.querySelector("#table");
     table.style.width = "100%";
 
-    const rows = cities.length;
-    const columns = cities.length + 1;
+    const headerRow = document.createElement("div");
+    headerRow.classList.add("cell", "head_column");
+    table.appendChild(headerRow);
+    cities.forEach(city => {
+        const cell = document.createElement("div");
+        cell.classList.add("cell", "head_column");
+        cell.textContent = city.id;
+        table.appendChild(cell);
+    });
 
-    for (let column = 0; column < columns; column++) {
-        const blankCell = document.createElement("div");
-        blankCell.setAttribute("class", "cell head_column");
-        if (column === 0) {
-            blankCell.textContent = "";
-        } else {
-            blankCell.textContent = cities[column - 1].id;
-        }
-        table.appendChild(blankCell);
-    }
+    cities.forEach((rowCity, rowIndex) => {
+        const row = document.createElement("div");
+        row.classList.add("cell", "head_row");
+        row.textContent = `${rowCity.id}-${rowCity.name}`;
+        if (rowIndex % 2 === 0) row.classList.add("even_row");
+        table.appendChild(row);
 
-    for (let row = 0; row < rows; row++) {
-        let namesRow = document.createElement("div");
-        namesRow.innerHTML = `${cities[row].id}-${cities[row].name}`;
-        namesRow.setAttribute("class", "head_row cell");
-        if ((row) % 2 === 0) {
-            namesRow.setAttribute("class", "cell head_row even_row");
-        }
-        table.appendChild(namesRow);
-
-        for (let column = 0; column < cities.length; column++) {
+        cities.forEach((columnCity, columnIndex) => {
             const cell = document.createElement("div");
-            cell.setAttribute("class", "cell");
+            cell.classList.add("cell");
+            const distance = distances.find(d => 
+                (d.city1 === rowCity.id && d.city2 === columnCity.id) || 
+                (d.city2 === rowCity.id && d.city1 === columnCity.id)
+            );
 
-            let distanceValue = null;
-            for (let distance of distances) {
-                if (
-                    distance.city1 === cities[row].id &&
-                    distance.city2 === cities[column].id
-                ) {
-                    distanceValue = distance.distance;
-                    break;
-                }
-                if (distance.city2 === cities[row].id && distance.city1 === cities[column].id) {
-                    distanceValue = distance.distance;
-                }
+            if (distance) {
+                cell.textContent = `${distance.distance / 10}`;
             }
-            if (distanceValue !== null) {
-                cell.innerHTML = `${distanceValue / 10}`;
-            }
-            if (column % 2 === 0) {
-                cell.style.backgroundColor = "BurlyWood";
-            }
-            if ((row) % 2 === 0) {
-                cell.setAttribute("class", "cell even_row");
-            }
+
+            if (columnIndex % 2 === 0) cell.style.backgroundColor = "BurlyWood";
+            if (rowIndex % 2 === 0) cell.classList.add("even_row");
+
             table.appendChild(cell);
-        }
-    }
+        });
+    });
 }
-
-
-const citiesDiv = document.querySelector("#cities");
-const h2 = document.querySelector("h2");
-const h3 = document.querySelector("h3");
-const closestCity = document.querySelector("#closest");
-const furthestCity = document.querySelector("#furthest");
-const table = document.querySelector("#table");
-const tabName = document.head.querySelector("title");
-
 
 const targetCityName = prompt("Skriv en stad");
 
-let targetCityObject = getTargetCityObject(targetCityName);
-let closestFurthest = findClosestFurthest(targetCityObject);
-createAllCityBoxes(targetCityName);
-createTable();
+const targetCityObject = getTargetCityObject(targetCityName);
+const closestFurthest = findClosestFurthest(targetCityObject);
 
+createAllCityBoxes(targetCityName); 
+createTable(); 
